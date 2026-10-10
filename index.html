@@ -12,6 +12,7 @@
         <div>
           <p class="eyebrow">IT415 Practical Exam</p>
           <h1>Campus Cafeteria POS</h1>
+          <p class="header-copy">Scenario 1 ordering, payment, receipt, and reset flow.</p>
         </div>
         <div class="status-pill" id="stageStatus">Stage 4: Validated and ready for review</div>
       </header>
@@ -28,7 +29,7 @@
           <div class="product-grid" id="productGrid"></div>
         </section>
 
-        <aside class="side-stack">
+        <aside class="checkout-stack">
           <section class="panel" aria-labelledby="cartTitle">
             <div class="panel-heading">
               <div>
@@ -52,7 +53,7 @@
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">Enter Payment</p>
-                <h2 id="paymentTitle">Cash Payment</h2>
+                <h2 id="paymentTitle">Checkout</h2>
               </div>
             </div>
             <label class="field-label" for="amountPaid">Amount Paid</label>
@@ -60,23 +61,29 @@
             <p class="helper-text">Enter the customer's cash payment, then confirm to compute change.</p>
             <p class="payment-message" id="paymentMessage" aria-live="polite"></p>
             <button class="primary-button" id="confirmPaymentButton" type="button">Confirm Payment</button>
-          </section>
-
-          <section class="panel" aria-labelledby="receiptTitle">
-            <div class="panel-heading">
-              <div>
-                <p class="eyebrow">Receipt</p>
-                <h2 id="receiptTitle">Digital Receipt</h2>
-              </div>
+            <div class="transaction-actions">
+              <button class="secondary-button" id="viewReceiptButton" type="button" disabled>View Receipt</button>
+              <button class="secondary-button" id="newTransactionButton" type="button" disabled>New Transaction</button>
             </div>
-            <div class="receipt-placeholder" id="receiptContent">
-              Transaction receipt will appear here after payment is confirmed.
-            </div>
-            <button class="secondary-button" id="newTransactionButton" type="button" disabled>New Transaction</button>
           </section>
         </aside>
       </section>
     </main>
+
+    <div class="modal-backdrop hidden" id="receiptModal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+      <section class="receipt-modal">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow">Payment Confirmed</p>
+            <h2 id="receiptModalTitle">Digital Receipt</h2>
+          </div>
+          <button class="close-button" id="closeReceiptButton" type="button" aria-label="Close receipt">x</button>
+        </div>
+        <div class="receipt-placeholder" id="receiptContent">
+          Transaction receipt will appear here after payment is confirmed.
+        </div>
+      </section>
+    </div>
 
     <script src="app.js"></script>
   </body>

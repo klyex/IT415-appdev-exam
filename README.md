@@ -31,7 +31,7 @@ Products:
 
 ## Run Current Stage
 
-Open `index.html` in a browser. The current stage displays the desktop-friendly POS layout, the six cafeteria products, working cart behavior, stricter quantity and payment validation, change computation, payment confirmation, receipt generation, and New Transaction reset.
+Open `index.html` in a browser. The current stage displays the desktop-friendly responsive POS layout, the six cafeteria products, working cart behavior, stricter quantity and payment validation, change computation, payment confirmation, receipt generation in a pop-up modal, and New Transaction reset.
 
 ## Stage 4 Final Test
 
@@ -42,6 +42,7 @@ Also test these cases before taking screenshots or committing:
 - Blank, non-numeric, negative, and insufficient payment values show clear error messages.
 - Quantity values cannot be zero, negative, decimal, or blank.
 - Item increase, decrease, and remove controls update the total immediately.
+- The digital receipt opens as a modal after successful payment and can be reopened with View Receipt.
 - New Transaction clears the cart, payment amount, payment message, receipt, and total.
 
 Validation notes are recorded in `references/stage-04-validation-notes.md`.

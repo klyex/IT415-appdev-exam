@@ -20,8 +20,9 @@ Observed result:
 
 - Total displayed as ₱165.00.
 - Payment confirmation displayed change as ₱35.00.
-- Receipt displayed a transaction reference.
+- Receipt modal opened after payment and displayed a transaction reference.
 - New Transaction reset the cart count to 0 items and the total to ₱0.00.
+- Desktop and mobile-sized browser checks confirmed that the receipt modal opens and can be closed or reopened.
 
 ## Invalid Input Tests
 
@@ -42,6 +43,9 @@ Observed quantity validation:
 - Tightened quantity parsing so blank, decimal, zero, and negative quantity values reset to 1.
 - Tightened payment parsing to accept ordinary peso amounts with up to two decimal places.
 - Updated the transaction reference to use local date and time with milliseconds.
+- Improved the interface layout for a cleaner desktop view and responsive smaller-screen layout.
+- Changed the digital receipt into a pop-up modal after payment confirmation.
+- Added a View Receipt action so the latest receipt can be reopened before starting a new transaction.
 - Updated the interface status and README to show Stage 4 readiness.
 
 ## Remaining Submission Work

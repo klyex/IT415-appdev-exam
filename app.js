@@ -16,7 +16,10 @@ const cartItemCount = document.querySelector("#cartItemCount");
 const amountPaidInput = document.querySelector("#amountPaid");
 const paymentMessage = document.querySelector("#paymentMessage");
 const confirmPaymentButton = document.querySelector("#confirmPaymentButton");
+const receiptModal = document.querySelector("#receiptModal");
 const receiptContent = document.querySelector("#receiptContent");
+const closeReceiptButton = document.querySelector("#closeReceiptButton");
+const viewReceiptButton = document.querySelector("#viewReceiptButton");
 const newTransactionButton = document.querySelector("#newTransactionButton");
 
 let cart = [];
@@ -156,8 +159,10 @@ function setPaymentMessage(message, type = "") {
 
 function clearCompletedTransaction() {
   completedTransaction = null;
+  viewReceiptButton.disabled = true;
   newTransactionButton.disabled = true;
   receiptContent.innerHTML = "Transaction receipt will appear here after payment is confirmed.";
+  closeReceiptModal();
   setPaymentMessage("");
 }
 
@@ -219,7 +224,20 @@ function confirmPayment() {
     "success"
   );
   renderReceipt();
+  viewReceiptButton.disabled = false;
   newTransactionButton.disabled = false;
+  openReceiptModal();
+}
+
+function openReceiptModal() {
+  if (!completedTransaction) return;
+
+  receiptModal.classList.remove("hidden");
+  closeReceiptButton.focus();
+}
+
+function closeReceiptModal() {
+  receiptModal.classList.add("hidden");
 }
 
 function renderReceipt() {
@@ -301,7 +319,21 @@ cartList.addEventListener("click", (event) => {
 });
 
 confirmPaymentButton.addEventListener("click", confirmPayment);
+viewReceiptButton.addEventListener("click", openReceiptModal);
+closeReceiptButton.addEventListener("click", closeReceiptModal);
 newTransactionButton.addEventListener("click", startNewTransaction);
+
+receiptModal.addEventListener("click", (event) => {
+  if (event.target === receiptModal) {
+    closeReceiptModal();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !receiptModal.classList.contains("hidden")) {
+    closeReceiptModal();
+  }
+});
 
 renderProducts();
 renderCart();
