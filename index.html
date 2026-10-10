@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Cafeteria POS</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">IT415 Practical Exam</p>
+          <h1>Campus Cafeteria POS</h1>
+        </div>
+        <div class="status-pill" id="stageStatus">Stage 2: Ordering and calculations</div>
+      </header>
+
+      <section class="workspace" aria-label="Campus Cafeteria POS workspace">
+        <section class="panel products-panel" aria-labelledby="productsTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Browse Products</p>
+              <h2 id="productsTitle">Cafeteria Menu</h2>
+            </div>
+            <span class="count-label">6 products</span>
+          </div>
+          <div class="product-grid" id="productGrid"></div>
+        </section>
+
+        <aside class="side-stack">
+          <section class="panel" aria-labelledby="cartTitle">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Review Order</p>
+                <h2 id="cartTitle">Cart Summary</h2>
+              </div>
+              <span class="count-label" id="cartItemCount">0 items</span>
+            </div>
+            <div class="empty-state" id="emptyCartMessage">
+              <p>No items added yet.</p>
+              <small>Add products from the menu to build the order.</small>
+            </div>
+            <div class="cart-list" id="cartList" aria-live="polite"></div>
+            <div class="summary-row">
+              <span>Total</span>
+              <strong id="cartTotal">₱0.00</strong>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="paymentTitle">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Enter Payment</p>
+                <h2 id="paymentTitle">Cash Payment</h2>
+              </div>
+            </div>
+            <label class="field-label" for="amountPaid">Amount Paid</label>
+            <input id="amountPaid" class="payment-input" type="number" min="0" step="0.01" placeholder="0.00" disabled />
+            <p class="helper-text">Payment validation and change computation will be added in Stage 3.</p>
+            <button class="primary-button" type="button" disabled>Confirm Payment</button>
+          </section>
+
+          <section class="panel" aria-labelledby="receiptTitle">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Receipt</p>
+                <h2 id="receiptTitle">Digital Receipt</h2>
+              </div>
+            </div>
+            <div class="receipt-placeholder">
+              Transaction receipt will appear here after payment is confirmed.
+            </div>
+            <button class="secondary-button" type="button" disabled>New Transaction</button>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
