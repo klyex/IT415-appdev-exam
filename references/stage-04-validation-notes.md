@@ -46,6 +46,8 @@ Observed quantity validation:
 - Improved the interface layout for a cleaner desktop view and responsive smaller-screen layout.
 - Changed the digital receipt into a pop-up modal after payment confirmation.
 - Added a View Receipt action so the latest receipt can be reopened before starting a new transaction.
+- Removed nonessential on-screen helper/status text from the POS interface.
+- Adjusted product, cart, and checkout containers for more consistent spacing and sizing.
 - Updated the interface status and README to show Stage 4 readiness.
 
 ## Remaining Submission Work
