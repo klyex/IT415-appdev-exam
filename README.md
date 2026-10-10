@@ -27,13 +27,21 @@ Products:
 1. Setup and interface
 2. Ordering and calculations
 3. Validation and final improvements
+4. Final QA and readiness check
 
 ## Run Current Stage
 
-Open `index.html` in a browser. The current stage displays the desktop-friendly POS layout, the six cafeteria products, working cart behavior, payment validation, change computation, payment confirmation, receipt generation, and New Transaction reset.
+Open `index.html` in a browser. The current stage displays the desktop-friendly POS layout, the six cafeteria products, working cart behavior, stricter quantity and payment validation, change computation, payment confirmation, receipt generation, and New Transaction reset.
 
-## Stage 3 Test
+## Stage 4 Final Test
 
 Add 2 Fried Chicken, 1 Rice (Plain), and 1 Iced Tea. The order total should be ₱165.00. Enter ₱200.00 as the amount paid and confirm payment. The app should show ₱35.00 change and generate a receipt with a transaction reference.
 
-Also test blank, non-numeric, negative, and insufficient payment values. Each should show a clear error message.
+Also test these cases before taking screenshots or committing:
+
+- Blank, non-numeric, negative, and insufficient payment values show clear error messages.
+- Quantity values cannot be zero, negative, decimal, or blank.
+- Item increase, decrease, and remove controls update the total immediately.
+- New Transaction clears the cart, payment amount, payment message, receipt, and total.
+
+Validation notes are recorded in `references/stage-04-validation-notes.md`.

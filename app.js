@@ -41,6 +41,7 @@ function renderProducts() {
               class="quantity-input"
               type="number"
               min="1"
+              step="1"
               value="1"
               aria-label="Quantity for ${product.name}"
               data-quantity-for="${product.id}"
@@ -61,7 +62,7 @@ function getProduct(productId) {
 
 function getRequestedQuantity(productId) {
   const input = document.querySelector(`[data-quantity-for="${productId}"]`);
-  const quantity = Number.parseInt(input.value, 10);
+  const quantity = Number(input.value);
 
   if (!Number.isInteger(quantity) || quantity < 1) {
     input.value = "1";
@@ -163,13 +164,14 @@ function clearCompletedTransaction() {
 function validatePayment(amountText) {
   const total = getCartTotal();
   const trimmedAmount = amountText.trim();
+  const decimalCashPattern = /^\d+(\.\d{1,2})?$/;
   const amountPaid = Number(trimmedAmount);
 
   if (cart.length === 0) {
     return { isValid: false, message: "Add at least one item before payment." };
   }
 
-  if (trimmedAmount === "" || !Number.isFinite(amountPaid) || amountPaid < 0) {
+  if (!decimalCashPattern.test(trimmedAmount) || !Number.isFinite(amountPaid)) {
     return { isValid: false, message: "Please enter a valid payment amount." };
   }
 
@@ -185,10 +187,13 @@ function validatePayment(amountText) {
 
 function createTransactionReference() {
   const now = new Date();
-  const datePart = now.toISOString().slice(0, 10).replaceAll("-", "");
+  const datePart = String(now.getFullYear()) +
+    String(now.getMonth() + 1).padStart(2, "0") +
+    String(now.getDate()).padStart(2, "0");
   const timePart = String(now.getHours()).padStart(2, "0") +
     String(now.getMinutes()).padStart(2, "0") +
-    String(now.getSeconds()).padStart(2, "0");
+    String(now.getSeconds()).padStart(2, "0") +
+    String(now.getMilliseconds()).padStart(3, "0");
 
   return `CC-${datePart}-${timePart}`;
 }
@@ -270,7 +275,7 @@ productGrid.addEventListener("click", (event) => {
 productGrid.addEventListener("input", (event) => {
   if (!event.target.matches("[data-quantity-for]")) return;
 
-  const quantity = Number.parseInt(event.target.value, 10);
+  const quantity = Number(event.target.value);
 
   if (!Number.isInteger(quantity) || quantity < 1) {
     event.target.value = "1";
