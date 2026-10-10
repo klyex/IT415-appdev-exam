@@ -30,10 +30,10 @@ Products:
 
 ## Run Current Stage
 
-Open `index.html` in a browser. The current stage displays the desktop-friendly POS layout, the six cafeteria products, and working cart behavior for adding products, increasing or decreasing quantities, removing items, and computing subtotals and the total.
+Open `index.html` in a browser. The current stage displays the desktop-friendly POS layout, the six cafeteria products, working cart behavior, payment validation, change computation, payment confirmation, receipt generation, and New Transaction reset.
 
-Payment validation, receipt generation, and new-transaction reset are reserved for Stage 3.
+## Stage 3 Test
 
-## Stage 2 Test
+Add 2 Fried Chicken, 1 Rice (Plain), and 1 Iced Tea. The order total should be ₱165.00. Enter ₱200.00 as the amount paid and confirm payment. The app should show ₱35.00 change and generate a receipt with a transaction reference.
 
-Add 2 Fried Chicken, 1 Rice (Plain), and 1 Iced Tea. The order total should be ₱165.00.
+Also test blank, non-numeric, negative, and insufficient payment values. Each should show a clear error message.

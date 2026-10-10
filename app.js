@@ -13,8 +13,14 @@ const cartList = document.querySelector("#cartList");
 const cartTotal = document.querySelector("#cartTotal");
 const emptyCartMessage = document.querySelector("#emptyCartMessage");
 const cartItemCount = document.querySelector("#cartItemCount");
+const amountPaidInput = document.querySelector("#amountPaid");
+const paymentMessage = document.querySelector("#paymentMessage");
+const confirmPaymentButton = document.querySelector("#confirmPaymentButton");
+const receiptContent = document.querySelector("#receiptContent");
+const newTransactionButton = document.querySelector("#newTransactionButton");
 
 let cart = [];
+let completedTransaction = null;
 
 const peso = new Intl.NumberFormat("en-PH", {
   style: "currency",
@@ -76,6 +82,7 @@ function addToCart(productId) {
     cart.push({ ...product, quantity: requestedQuantity });
   }
 
+  clearCompletedTransaction();
   renderCart();
 }
 
@@ -85,6 +92,7 @@ function increaseQuantity(productId) {
   if (!item) return;
 
   item.quantity += 1;
+  clearCompletedTransaction();
   renderCart();
 }
 
@@ -94,11 +102,13 @@ function decreaseQuantity(productId) {
   if (!item || item.quantity <= 1) return;
 
   item.quantity -= 1;
+  clearCompletedTransaction();
   renderCart();
 }
 
 function removeItem(productId) {
   cart = cart.filter((item) => item.id !== productId);
+  clearCompletedTransaction();
   renderCart();
 }
 
@@ -138,6 +148,117 @@ function renderCart() {
     .join("");
 }
 
+function setPaymentMessage(message, type = "") {
+  paymentMessage.textContent = message;
+  paymentMessage.className = `payment-message ${type}`.trim();
+}
+
+function clearCompletedTransaction() {
+  completedTransaction = null;
+  newTransactionButton.disabled = true;
+  receiptContent.innerHTML = "Transaction receipt will appear here after payment is confirmed.";
+  setPaymentMessage("");
+}
+
+function validatePayment(amountText) {
+  const total = getCartTotal();
+  const trimmedAmount = amountText.trim();
+  const amountPaid = Number(trimmedAmount);
+
+  if (cart.length === 0) {
+    return { isValid: false, message: "Add at least one item before payment." };
+  }
+
+  if (trimmedAmount === "" || !Number.isFinite(amountPaid) || amountPaid < 0) {
+    return { isValid: false, message: "Please enter a valid payment amount." };
+  }
+
+  if (amountPaid < total) {
+    return {
+      isValid: false,
+      message: `Insufficient payment. Please enter at least ${peso.format(total)}.`,
+    };
+  }
+
+  return { isValid: true, amountPaid, change: amountPaid - total };
+}
+
+function createTransactionReference() {
+  const now = new Date();
+  const datePart = now.toISOString().slice(0, 10).replaceAll("-", "");
+  const timePart = String(now.getHours()).padStart(2, "0") +
+    String(now.getMinutes()).padStart(2, "0") +
+    String(now.getSeconds()).padStart(2, "0");
+
+  return `CC-${datePart}-${timePart}`;
+}
+
+function confirmPayment() {
+  const result = validatePayment(amountPaidInput.value);
+
+  if (!result.isValid) {
+    setPaymentMessage(result.message, "error");
+    return;
+  }
+
+  completedTransaction = {
+    reference: createTransactionReference(),
+    items: cart.map((item) => ({ ...item })),
+    total: getCartTotal(),
+    amountPaid: result.amountPaid,
+    change: result.change,
+  };
+
+  setPaymentMessage(
+    `Payment successful. Change: ${peso.format(completedTransaction.change)}.`,
+    "success"
+  );
+  renderReceipt();
+  newTransactionButton.disabled = false;
+}
+
+function renderReceipt() {
+  if (!completedTransaction) return;
+
+  const itemRows = completedTransaction.items
+    .map((item) => {
+      const subtotal = item.price * item.quantity;
+
+      return `
+        <div class="receipt-line">
+          <span>${item.quantity} x ${item.name}</span>
+          <strong>${peso.format(subtotal)}</strong>
+        </div>
+      `;
+    })
+    .join("");
+
+  receiptContent.innerHTML = `
+    <div class="receipt-reference">Ref: ${completedTransaction.reference}</div>
+    ${itemRows}
+    <div class="receipt-total-line">
+      <span>Total</span>
+      <span>${peso.format(completedTransaction.total)}</span>
+    </div>
+    <div class="receipt-line">
+      <span>Amount Paid</span>
+      <strong>${peso.format(completedTransaction.amountPaid)}</strong>
+    </div>
+    <div class="receipt-line">
+      <span>Change</span>
+      <strong>${peso.format(completedTransaction.change)}</strong>
+    </div>
+  `;
+}
+
+function startNewTransaction() {
+  cart = [];
+  amountPaidInput.value = "";
+  setPaymentMessage("");
+  clearCompletedTransaction();
+  renderCart();
+}
+
 productGrid.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add-product]");
 
@@ -173,6 +294,9 @@ cartList.addEventListener("click", (event) => {
     removeItem(removeButton.dataset.remove);
   }
 });
+
+confirmPaymentButton.addEventListener("click", confirmPayment);
+newTransactionButton.addEventListener("click", startNewTransaction);
 
 renderProducts();
 renderCart();

@@ -13,7 +13,7 @@
           <p class="eyebrow">IT415 Practical Exam</p>
           <h1>Campus Cafeteria POS</h1>
         </div>
-        <div class="status-pill" id="stageStatus">Stage 2: Ordering and calculations</div>
+        <div class="status-pill" id="stageStatus">Stage 3: Payment, receipt, and reset</div>
       </header>
 
       <section class="workspace" aria-label="Campus Cafeteria POS workspace">
@@ -56,9 +56,10 @@
               </div>
             </div>
             <label class="field-label" for="amountPaid">Amount Paid</label>
-            <input id="amountPaid" class="payment-input" type="number" min="0" step="0.01" placeholder="0.00" disabled />
-            <p class="helper-text">Payment validation and change computation will be added in Stage 3.</p>
-            <button class="primary-button" type="button" disabled>Confirm Payment</button>
+            <input id="amountPaid" class="payment-input" type="text" inputmode="decimal" placeholder="0.00" />
+            <p class="helper-text">Enter the customer's cash payment, then confirm to compute change.</p>
+            <p class="payment-message" id="paymentMessage" aria-live="polite"></p>
+            <button class="primary-button" id="confirmPaymentButton" type="button">Confirm Payment</button>
           </section>
 
           <section class="panel" aria-labelledby="receiptTitle">
@@ -68,10 +69,10 @@
                 <h2 id="receiptTitle">Digital Receipt</h2>
               </div>
             </div>
-            <div class="receipt-placeholder">
+            <div class="receipt-placeholder" id="receiptContent">
               Transaction receipt will appear here after payment is confirmed.
             </div>
-            <button class="secondary-button" type="button" disabled>New Transaction</button>
+            <button class="secondary-button" id="newTransactionButton" type="button" disabled>New Transaction</button>
           </section>
         </aside>
       </section>
