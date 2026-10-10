@@ -1,3 +1,4 @@
+// Product data
 // Hard-coded Scenario 1 products from the IT415 activity PDF.
 const products = [
   { id: "rice-plain", name: "Rice (Plain)", price: 15 },
@@ -30,35 +31,37 @@ const peso = new Intl.NumberFormat("en-PH", {
   currency: "PHP",
 });
 
+// Product rendering
 function renderProducts() {
-  productGrid.innerHTML = products
-    .map(
-      (product) => `
-        <article class="product-card">
-          <div>
-            <h3>${product.name}</h3>
-            <div class="price">${peso.format(product.price)}</div>
-          </div>
-          <div class="product-actions">
-            <input
-              class="quantity-input"
-              type="number"
-              min="1"
-              step="1"
-              value="1"
-              aria-label="Quantity for ${product.name}"
-              data-quantity-for="${product.id}"
-            />
-            <button class="primary-button" type="button" data-add-product="${product.id}">
-              Add to Cart
-            </button>
-          </div>
-        </article>
-      `
-    )
-    .join("");
+  productGrid.innerHTML = products.map(renderProductCard).join("");
 }
 
+function renderProductCard(product) {
+  return `
+    <article class="product-card">
+      <div>
+        <h3>${product.name}</h3>
+        <div class="price">${peso.format(product.price)}</div>
+      </div>
+      <div class="product-actions">
+        <input
+          class="quantity-input"
+          type="number"
+          min="1"
+          step="1"
+          value="1"
+          aria-label="Quantity for ${product.name}"
+          data-quantity-for="${product.id}"
+        />
+        <button class="primary-button" type="button" data-add-product="${product.id}">
+          Add to Cart
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+// Product and cart helpers
 function getProduct(productId) {
   return products.find((product) => product.id === productId);
 }
@@ -90,22 +93,15 @@ function addToCart(productId) {
   renderCart();
 }
 
-function increaseQuantity(productId) {
+function updateCartQuantity(productId, change) {
   const item = cart.find((cartItem) => cartItem.id === productId);
 
   if (!item) return;
 
-  item.quantity += 1;
-  clearCompletedTransaction();
-  renderCart();
-}
+  const nextQuantity = item.quantity + change;
+  if (nextQuantity < 1) return;
 
-function decreaseQuantity(productId) {
-  const item = cart.find((cartItem) => cartItem.id === productId);
-
-  if (!item || item.quantity <= 1) return;
-
-  item.quantity -= 1;
+  item.quantity = nextQuantity;
   clearCompletedTransaction();
   renderCart();
 }
@@ -120,6 +116,7 @@ function getCartTotal() {
   return cart.reduce((total, item) => total + item.price * item.quantity, 0);
 }
 
+// Cart rendering
 function renderCart() {
   const totalQuantity = cart.reduce((count, item) => count + item.quantity, 0);
 
@@ -127,31 +124,32 @@ function renderCart() {
   emptyCartMessage.classList.toggle("hidden", cart.length > 0);
   cartTotal.textContent = peso.format(getCartTotal());
 
-  cartList.innerHTML = cart
-    .map((item) => {
-      const subtotal = item.price * item.quantity;
-
-      return `
-        <article class="cart-item">
-          <div class="cart-item-main">
-            <div>
-              <div class="cart-item-name">${item.name}</div>
-              <div class="cart-item-meta">${peso.format(item.price)} each</div>
-            </div>
-            <div class="cart-item-subtotal">${peso.format(subtotal)}</div>
-          </div>
-          <div class="cart-controls" aria-label="Controls for ${item.name}">
-            <button class="icon-button" type="button" data-decrease="${item.id}" ${item.quantity === 1 ? "disabled" : ""}>-</button>
-            <span class="cart-quantity">${item.quantity}</span>
-            <button class="icon-button" type="button" data-increase="${item.id}">+</button>
-            <button class="remove-button" type="button" data-remove="${item.id}">Remove</button>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+  cartList.innerHTML = cart.map(renderCartItem).join("");
 }
 
+function renderCartItem(item) {
+  const subtotal = item.price * item.quantity;
+
+  return `
+    <article class="cart-item">
+      <div class="cart-item-main">
+        <div>
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-meta">${peso.format(item.price)} each</div>
+        </div>
+        <div class="cart-item-subtotal">${peso.format(subtotal)}</div>
+      </div>
+      <div class="cart-controls" aria-label="Controls for ${item.name}">
+        <button class="icon-button" type="button" data-decrease="${item.id}" ${item.quantity === 1 ? "disabled" : ""}>-</button>
+        <span class="cart-quantity">${item.quantity}</span>
+        <button class="icon-button" type="button" data-increase="${item.id}">+</button>
+        <button class="remove-button" type="button" data-remove="${item.id}">Remove</button>
+      </div>
+    </article>
+  `;
+}
+
+// Payment and receipt state
 function setPaymentMessage(message, type = "") {
   paymentMessage.textContent = message;
   paymentMessage.className = `payment-message ${type}`.trim();
@@ -190,6 +188,7 @@ function validatePayment(amountText) {
   return { isValid: true, amountPaid, change: amountPaid - total };
 }
 
+// Transaction helpers
 function createTransactionReference() {
   const now = new Date();
   const datePart = String(now.getFullYear()) +
@@ -229,6 +228,7 @@ function confirmPayment() {
   openReceiptModal();
 }
 
+// Receipt modal
 function openReceiptModal() {
   if (!completedTransaction) return;
 
@@ -243,37 +243,52 @@ function closeReceiptModal() {
 function renderReceipt() {
   if (!completedTransaction) return;
 
-  const itemRows = completedTransaction.items
-    .map((item) => {
-      const subtotal = item.price * item.quantity;
-
-      return `
-        <div class="receipt-line">
-          <span>${item.quantity} x ${item.name}</span>
-          <strong>${peso.format(subtotal)}</strong>
-        </div>
-      `;
-    })
-    .join("");
+  const itemRows = completedTransaction.items.map(renderReceiptItem).join("");
 
   receiptContent.innerHTML = `
-    <div class="receipt-reference">Ref: ${completedTransaction.reference}</div>
-    ${itemRows}
-    <div class="receipt-total-line">
-      <span>Total</span>
-      <span>${peso.format(completedTransaction.total)}</span>
-    </div>
-    <div class="receipt-line">
-      <span>Amount Paid</span>
-      <strong>${peso.format(completedTransaction.amountPaid)}</strong>
-    </div>
-    <div class="receipt-line">
-      <span>Change</span>
-      <strong>${peso.format(completedTransaction.change)}</strong>
+    <div class="receipt-slip">
+      <div class="receipt-header-block">
+        <h3 class="receipt-brand-title">Campus Cafeteria</h3>
+        <p class="receipt-brand-subtitle">Official Transaction Receipt</p>
+      </div>
+      <hr class="receipt-divider" />
+      <div class="receipt-meta-row">
+        <span>Reference:</span>
+        <strong class="receipt-reference">${completedTransaction.reference}</strong>
+      </div>
+      <hr class="receipt-divider" />
+      <div class="receipt-items-list">
+        ${itemRows}
+      </div>
+      <div class="receipt-total-line">
+        <span>Total</span>
+        <span>${peso.format(completedTransaction.total)}</span>
+      </div>
+      <div class="receipt-summary-group">
+        <div class="receipt-line">
+          <span>Amount Paid</span>
+          <strong>${peso.format(completedTransaction.amountPaid)}</strong>
+        </div>
+        <div class="receipt-highlight-line">
+          <span>Change</span>
+          <span>${peso.format(completedTransaction.change)}</span>
+        </div>
+      </div>
+      <p class="receipt-footer-msg">Thank you for dining at Campus Cafeteria!</p>
     </div>
   `;
 }
 
+function renderReceiptItem(item) {
+  return `
+    <div class="receipt-line">
+      <span>${item.quantity} &times; ${item.name}</span>
+      <strong>${peso.format(item.price * item.quantity)}</strong>
+    </div>
+  `;
+}
+
+// Reset
 function startNewTransaction() {
   cart = [];
   amountPaidInput.value = "";
@@ -282,6 +297,7 @@ function startNewTransaction() {
   renderCart();
 }
 
+// Event handlers
 productGrid.addEventListener("click", (event) => {
   const addButton = event.target.closest("[data-add-product]");
 
@@ -306,11 +322,11 @@ cartList.addEventListener("click", (event) => {
   const removeButton = event.target.closest("[data-remove]");
 
   if (increaseButton) {
-    increaseQuantity(increaseButton.dataset.increase);
+    updateCartQuantity(increaseButton.dataset.increase, 1);
   }
 
   if (decreaseButton) {
-    decreaseQuantity(decreaseButton.dataset.decrease);
+    updateCartQuantity(decreaseButton.dataset.decrease, -1);
   }
 
   if (removeButton) {
@@ -335,5 +351,6 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// App startup
 renderProducts();
 renderCart();
